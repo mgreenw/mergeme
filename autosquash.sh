@@ -90,7 +90,7 @@ if [ $(git ls-files -u | wc -l) -gt 0 ] ; then
     -X POST \
     -H "${AUTH_HEADER}" -H "${API_HEADER}" \
     "${URI}/repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments" \
-    -d "{\"body\":\"There were conflicts during the rebase. Please resolve conflicts before trying again or force-pushing.\"}"
+    -d "{\"body\":\"There were conflicts during the rebase. Please resolve conflicts manually.\"}"
 
   exit 1
 fi
