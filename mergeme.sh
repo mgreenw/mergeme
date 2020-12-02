@@ -90,4 +90,11 @@ curl \
   -X POST \
   -H "${AUTH_HEADER}" -H "${API_HEADER}" \
   "${URI}/repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments" \
-  -d "{\"body\":\"Rebased and autosquashed onto $BASE_BRANCH\"}"
+  -d "{\"body\":\"Rebased w/autosquash onto $BASE_BRANCH\. Merging!\"}"
+
+# Merge the PR
+curl \
+  -X PUT \
+  -H "${AUTH_HEADER}" -H "${API_HEADER}" \
+  "${URI}/repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/merge" \
+  -d "{\"body\":\"Rebased w/autosquash onto $BASE_BRANCH\. Merging!\"}"

@@ -1,17 +1,14 @@
-# GitHub action to automatically rebase PRs
+# GitHub action to automatically merge PRs
 
-[![Build Status](https://api.cirrus-ci.com/github/cirrus-actions/rebase.svg)](https://cirrus-ci.com/github/cirrus-actions/rebase) [![](https://images.microbadger.com/badges/version/cirrusactions/rebase.svg)](https://microbadger.com/images/cirrusactions/rebase) [![](https://images.microbadger.com/badges/image/cirrusactions/rebase.svg)](https://microbadger.com/images/cirrusactions/rebase)
+_Based on the `rebase` action by `cirrus-actions`. Thanks for making an awesome action!_
 
-After installation simply comment `/rebase` to trigger the action:
-
-![rebase-action](https://user-images.githubusercontent.com/989066/51547853-14a57b00-1e35-11e9-841d-33114f0f0bd5.gif)
-
+After installation simply comment `/mergeme` to trigger the action:
 # Installation
 
 To configure the action simply add the following lines to your `.github/workflows/rebase.yml` workflow file:
 
 ```yml
-on: 
+on:
   issue_comment:
     types: [created]
 name: Automatic Rebase
@@ -47,4 +44,3 @@ Then for example approving a code review will start, run and finish the test wor
 
 GitHub can also optionally dismiss an existing review automatically after rebase, so you'll need to re-approve again which will trigger the test workflow.
 Set it up in your repository *Settings* > *Branches* > *Branch protection rules* > *Require pull request reviews before merging* > *Dismiss stale pull request approvals when new commits are pushed*.
-
