@@ -1,7 +1,7 @@
-name: Merge Me
-description: Automatically rebases and merges a PR on '/mergeme' comment
+name: Autosquash
+description: Rebase a PR w/autosquash
 runs:
   using: composite
   steps:
-    - run: ${{ github.action_path }}/mergeme.sh
+    - run: ${{ github.action_path }}/autosquash.sh
       shell: bash

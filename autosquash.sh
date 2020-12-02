@@ -4,17 +4,17 @@ set -e
 
 PR_NUMBER=$(jq -r ".pull_request.number" "$GITHUB_EVENT_PATH")
 if [[ "$PR_NUMBER" == "null" ]]; then
-	PR_NUMBER=$(jq -r ".issue.number" "$GITHUB_EVENT_PATH")
+  PR_NUMBER=$(jq -r ".issue.number" "$GITHUB_EVENT_PATH")
 fi
 if [[ "$PR_NUMBER" == "null" ]]; then
-	echo "Failed to determine PR Number."
-	exit 1
+  echo "Failed to determine PR Number."
+  exit 1
 fi
 echo "Collecting information about PR #$PR_NUMBER of $GITHUB_REPOSITORY..."
 
 if [[ -z "$GITHUB_TOKEN" ]]; then
-	echo "Set the GITHUB_TOKEN env variable."
-	exit 1
+  echo "Set the GITHUB_TOKEN env variable."
+  exit 1
 fi
 
 URI=https://api.github.com
@@ -34,24 +34,24 @@ user_resp=$(curl -X GET -s -H "${AUTH_HEADER}" -H "${API_HEADER}" \
 
 USER_NAME=$(echo "$user_resp" | jq -r ".name")
 if [[ "$USER_NAME" == "null" ]]; then
-	USER_NAME=$USER_LOGIN
+  USER_NAME=$USER_LOGIN
 fi
 USER_NAME="${USER_NAME} (Rebase PR Action)"
 
 USER_EMAIL=$(echo "$user_resp" | jq -r ".email")
 if [[ "$USER_EMAIL" == "null" ]]; then
-	USER_EMAIL="$USER_LOGIN@users.noreply.github.com"
+  USER_EMAIL="$USER_LOGIN@users.noreply.github.com"
 fi
 
 if [[ "$(echo "$pr_resp" | jq -r .rebaseable)" != "true" ]]; then
-	echo "GitHub doesn't think that the PR is rebaseable!"
-	echo "API response: $pr_resp"
-	exit 1
+  echo "GitHub doesn't think that the PR is rebaseable!"
+  echo "API response: $pr_resp"
+  exit 1
 fi
 
 if [[ -z "$BASE_BRANCH" ]]; then
-	echo "Cannot get base branch information for PR #$PR_NUMBER!"
-	exit 1
+  echo "Cannot get base branch information for PR #$PR_NUMBER!"
+  exit 1
 fi
 
 HEAD_REPO=$(echo "$pr_resp" | jq -r .head.repo.full_name)
@@ -85,16 +85,3 @@ EDITOR=true git rebase -i --autosquash origin/$BASE_BRANCH
 
 # push back
 git push --force-with-lease fork $HEAD_BRANCH
-
-curl \
-  -X POST \
-  -H "${AUTH_HEADER}" -H "${API_HEADER}" \
-  "${URI}/repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments" \
-  -d "{\"body\":\"Rebased w/autosquash onto $BASE_BRANCH. Merging.\"}"
-
-# Merge the PR
-curl \
-  -X PUT \
-  -H "${AUTH_HEADER}" -H "${API_HEADER}" \
-  "${URI}/repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/merge" \
-  -d "{}"
