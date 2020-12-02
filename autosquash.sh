@@ -83,5 +83,18 @@ git checkout -b $HEAD_BRANCH fork/$HEAD_BRANCH
 # true so it exits immediately
 EDITOR=true git rebase -i --autosquash origin/$BASE_BRANCH
 
+if [ $(git ls-files -u | wc -l) -gt 0 ] ; then
+  echo "There were conflicts during rebase. Aborting."
+
+  curl \
+    -X POST \
+    -H "${AUTH_HEADER}" -H "${API_HEADER}" \
+    "${URI}/repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments" \
+    -d "{\"body\":\"There were conflicts during the rebase. Please resolve conflicts before trying again or force-pushing.\"}"
+
+  exit 1
+fi
+
+
 # push back
 git push --force-with-lease fork $HEAD_BRANCH
